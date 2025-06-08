@@ -2,63 +2,83 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi"
 )
 
-// ControllerEmployee is the controller for the employee entity that returns handlers
-type handlerProduct struct {
-	// storage
-	st map[string]string // key: id, value: employee name
+// struct to represent the json fields
+type Product struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Quantity    int     `json:"quantity"`
+	CodeValue   string  `json:"code_value"`
+	IsPublished bool    `json:"is_published"`
+	Expiration  string  `json:"expiration"`
+	Price       float64 `json:"price"`
 }
 
-type ResponseGetByIdProduct struct {
-	Message string `json:"message"`
-	Data    *struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
-	} `json:"data"`
-	Error bool `json:"error"`
+// Check the JSON File
+func ShowProducts(filepath string) ([]Product, error) {
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return nil, err
+	}
+	var products []Product
+	err = json.Unmarshal(data, &products)
+	return products, err
 }
 
-func NewhandlerProduct() *handlerProduct {
-	return &handlerProduct{}
-}
-
-func (c *handlerProduct) GetById() http.HandlerFunc {
+// Respond all products listed on JSON file
+func GetProductHandler(products []Product) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// request
-		pathId := chi.URLParam(r, "id")
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(products)
+	}
+}
 
-		queryId := r.URL.Query().Get("id")
-
-		fmt.Println("pathId", pathId)
-		fmt.Println("queryId", queryId)
-
-		// process
-		// -> get employee
-		employee, ok := c.st[pathId]
-		if !ok {
-			code := http.StatusNotFound
-			body := &ResponseGetByIdProduct{Message: "Employee not found", Data: nil, Error: true}
-
-			w.WriteHeader(code)
-			w.Header().Add("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(body)
+// Respond the product based on id
+func GetProductByIdHandler(products []Product) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := chi.URLParam(r, "id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID", http.StatusBadRequest)
 			return
 		}
+		for _, p := range products {
+			if p.ID == id {
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(p)
+				return
+			}
+		}
+		http.NotFound(w, r)
 
-		code := http.StatusOK
-		body := &ResponseGetByIdProduct{Message: "Employee found", Data: &struct {
-			Id   string `json:"id"`
-			Name string `json:"name"`
-		}{Id: pathId, Name: employee}, Error: false}
+	}
+}
 
-		w.WriteHeader(code)
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(body)
-
+func SearchProductsHandler(products []Product) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		priceGtStr := r.URL.Query().Get("priceGt")
+		if priceGtStr == "" {
+			http.Error(w, "priceGt param is required", http.StatusBadRequest)
+			return
+		}
+		priceGt, err := strconv.ParseFloat(priceGtStr, 64)
+		if err != nil {
+			http.Error(w, "priceGt must be a number", http.StatusBadRequest)
+			return
+		}
+		var result []Product
+		for _, p := range products {
+			if p.Price > priceGt {
+				result = append(result, p)
+			}
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(result)
 	}
 }

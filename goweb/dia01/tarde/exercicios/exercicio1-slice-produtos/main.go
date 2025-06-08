@@ -2,12 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
-
-	"github.com/go-chi/chi/v5"
 )
 
 type Product struct {
@@ -39,17 +35,8 @@ func ShowProducts(filename string) ([]Product, error) {
 func main() {
 	products, err := ShowProducts("products.json")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error loading products:", err)
 	}
-
-	r := chi.NewRouter()
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(products)
-	})
-
-	fmt.Println("API rodando em http://localhost:8080/")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Println("Loaded products:", products)
 
 }

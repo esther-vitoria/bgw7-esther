@@ -1,24 +1,24 @@
 package main
 
-// import (
-// 	"log"
-// 	"net/http"
+import (
+	"log"
+	"net/http"
 
-// 	"github.com/go-chi/chi/v5"
-// 	"github.com/go-chi/chi/v5/middleware"
-// 	"google.com/bgw7-esther/first-server/exercicio2-criando-servidor/handlers"
-// )
+	"github.com/go-chi/chi"
+	"google.com/bgw7-esther/first-server/handlers"
+)
 
-// // Path Param => /:id => utilizado quando queremos buscar um recurso em expecifico
-// // Query Params => ?name=lucas&age=22&page=1&pageSize=15 => paginacao e filtros
+func main() {
+	products, err := handlers.ShowProducts("data/products.json")
+	if err != nil {
+		log.Fatal("failed to load products:", err)
+	}
 
-// func main() {
-// 	router := chi.NewRouter()
-// 	router.Use(middleware.Logger)
+	r := chi.NewRouter()
+	r.Get("/products", handlers.GetProductHandler(products))
+	r.Get("/products/search", handlers.SearchProductsHandler(products))
+	r.Get("/products/{id}", handlers.GetProductByIdHandler(products))
 
-// 	empolyeeHandler := handlers.NewHandlerEmployee()
-
-// 	router.Get("/employees/{id}", empolyeeHandler.GetById())
-
-// 	log.Fatal(http.ListenAndServe(":8080", router))
-// }
+	log.Println("Server running at :8080")
+	http.ListenAndServe(":8080", r)
+}
