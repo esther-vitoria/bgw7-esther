@@ -15,7 +15,7 @@ import (
 
 func main() {
 	// Carrega do arquivo JSON
-	products := loadProducts("data/products.json")
+	products := loadProducts("/Users/enbalbino/Documents/GitHub/bgw7-esther/goweb/dia02/manha/data/products.json")
 	db := make(map[int]*domain.Product)
 	for _, pr := range products {
 		db[pr.Id] = pr
