@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app/internal/application"
+	"app/desafio-goweb/internal/application"
 	"fmt"
 )
 

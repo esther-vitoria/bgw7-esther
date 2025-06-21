@@ -1,7 +1,7 @@
 package service
 
 import (
-	"app/internal"
+	"app/desafio-goweb/internal"
 )
 
 func NewServiceTicketDefault(rp internal.RepositoryTicket) *ServiceTicketDefault {

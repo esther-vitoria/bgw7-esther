@@ -1,7 +1,7 @@
 package loader
 
 import (
-	"app/internal"
+	"app/desafio-goweb/internal"
 	"encoding/csv"
 	"fmt"
 	"io"

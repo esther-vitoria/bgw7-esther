@@ -1,10 +1,10 @@
 package application
 
 import (
-	"app/internal/handler"
-	"app/internal/loader"
-	"app/internal/repository"
-	"app/internal/service"
+	"app/desafio-goweb/internal/handler"
+	"app/desafio-goweb/internal/loader"
+	"app/desafio-goweb/internal/repository"
+	"app/desafio-goweb/internal/service"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

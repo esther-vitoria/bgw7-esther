@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"app/internal"
+	"app/desafio-goweb/internal"
 	"net/http"
 
 	"github.com/bootcamp-go/web/response"
