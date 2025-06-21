@@ -1,7 +1,5 @@
 package internal
 
-import "context"
-
 // TicketAttributes is an struct that represents a ticket
 type TicketAttributes struct {
 	// Name represents the name of the owner of the ticket
@@ -36,13 +34,4 @@ type Ticket struct {
 	Id int `json:"id"`
 	// Attributes represents the attributes of the ticket
 	Attributes TicketAttributes `json:"attributes"`
-}
-
-type RepositoryTicket interface {
-	Get(ctx context.Context) (t map[int]TicketAttributes, err error)
-	GetTicketByDestinationCountry(ctx context.Context, country string) (t map[int]TicketAttributes, err error)
-}
-
-type ServiceTicket interface {
-	GetTotalAmountTickets() (total int, err error)
 }
