@@ -25,7 +25,10 @@ func (r *RepositoryTicketMap) GetAll() (t map[int]internal.Ticket, err error) {
 		t[k] = v
 	}
 
-	return
+	if len(t) == 0 {
+		return nil, apperrors.ErrLoadCSV
+	}
+	return t, nil
 }
 
 func (r *RepositoryTicketMap) GetTicketsByDestinationCountry(country string) (t map[int]internal.Ticket, err error) {

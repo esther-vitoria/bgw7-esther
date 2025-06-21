@@ -15,36 +15,50 @@ type ServiceTicketDefault struct {
 }
 
 func (s *ServiceTicketDefault) GetAllTickets() (t map[int]internal.Ticket, err error) {
-	return s.rp.GetAll()
+	tickets, err := s.rp.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return tickets, nil
 }
 
 func (s *ServiceTicketDefault) GetTotalAmountTickets() (total int, err error) {
 	tickets, err := s.rp.GetAll()
 	total = len(tickets)
-	return total, err
+
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 func (s *ServiceTicketDefault) GetTicketsAmountByDestinationCountry(country string) (total int, err error) {
 	tickets, err := s.rp.GetTicketsByDestinationCountry(country)
 	total = len(tickets)
 
-	return total, err
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 func (s *ServiceTicketDefault) GetTicketsByDestinationCountry(country string) (tickets map[int]internal.Ticket, err error) {
 	tickets, err = s.rp.GetTicketsByDestinationCountry(country)
 
-	return tickets, err
+	if err != nil {
+		return nil, err
+	}
+	return tickets, nil
 }
 
 func (s *ServiceTicketDefault) GetPercentageTicketsByDestinationCountry(country string) (avg float64, err error) {
 	total, err := s.GetTotalAmountTickets()
 	if err != nil {
-		return
+		return 0, err
 	}
 	countryAmount, err := s.GetTicketsAmountByDestinationCountry(country)
 	if err != nil {
-		return
+		return 0, err
 	}
 	avg = float64(countryAmount) / float64(total)
 	return

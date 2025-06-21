@@ -3,6 +3,7 @@ package main
 import (
 	"app/desafio-goweb/internal/application"
 	"fmt"
+	"log"
 )
 
 func main() {
@@ -13,11 +14,13 @@ func main() {
 	}
 
 	app := application.NewServerChi(cfg)
+	log.Println("Server running at :8080")
 
 	err := app.SetUp()
 	if err != nil {
-		fmt.Println("Iniciando....")
+		//fmt.Println("Iniciando....")
 		fmt.Println(err)
 		return
 	}
+
 }
