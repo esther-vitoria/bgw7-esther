@@ -20,7 +20,7 @@ type Ticket struct {
 
 // Carrega os dados que estão no arquivo tickets.csv, caso não ocorra erros faz verificacões e converte alguns dados (id, preco) depois armazena tudo em um array
 func LoadTickets() ([]Ticket, error) {
-	file, err := os.Open("/Users/enbalbino/Documents/GitHub/bgw7-esther/gobases/dia05/desafio/desafio-go-bases-main/tickets.csv")
+	file, err := os.Open("/Users/enbalbino/Documents/GitHub/bgw7-esther/gobases/dia05/desafio/desafio-go-bases-main/internal/db/tickets.csv")
 	if err != nil {
 		return nil, err
 	}
