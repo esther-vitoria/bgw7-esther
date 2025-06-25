@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# desafio-go-bases
-=======
 # Desafio Go Bases
 
 Este projeto foi desenvolvido durante o Bootcamp Go, tem como objetivo manipular, analisar e exibir informações referentes a tickets de viagens, utilizando dados presentes em um arquivo CSV, colocando em prática o que foi aprendido no módulo de Go Bases.
@@ -87,4 +84,4 @@ Para garantir o correto funcionamento, execute os testes:
 
 **Autor:**
 Esther Vitória
->>>>>>> 57ebbfaa8c314f256ee31f8b34e8d52e16b15e6e
+
