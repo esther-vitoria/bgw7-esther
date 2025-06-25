@@ -20,7 +20,7 @@ type Ticket struct {
 
 // Carrega os dados que estão no arquivo tickets.csv, caso não ocorra erros faz verificacões e converte alguns dados (id, preco) depois armazena tudo em um array
 func LoadTickets() ([]Ticket, error) {
-	file, err := os.Open("/Users/enbalbino/Documents/GitHub/bgw7-esther/gobases/dia05/desafio/desafio-go-bases-main/internal/db/tickets.csv")
+	file, err := os.Open("internal/db/tickets.csv")
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func GetCountByPeriod(period string) (int, error) {
 }
 
 // Recebe um destino e total de itens e devolve a porcentagem de tickets com destino inserido
-func AverageDestination(destination string, total int) (float64, error) {
+func PercentageDestination(destination string, total int) (float64, error) {
 	if total == 0 {
 		return 0, errors.New("total não pode ser 0")
 	}

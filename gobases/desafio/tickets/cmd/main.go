@@ -20,7 +20,7 @@ func main() {
 
 	allTickets, _ := tickets.LoadTickets() // chamando a func que carrega os dados do csv
 
-	percent, err := tickets.AverageDestination(destinationInput, len(allTickets)) //chamando a func AverageDestination que recebe o destino inserido e o total de tikets devolvido pela func LoadTickets
+	percent, err := tickets.PercentageDestination(destinationInput, len(allTickets)) //chamando a func AverageDestination que recebe o destino inserido e o total de tikets devolvido pela func LoadTickets
 
 	if err == nil { //verificando se houve erro na chamada da func AverageDestination
 		fmt.Printf("\nPorcentagem para o destino %s: %.2f%%", destinationInput, percent)

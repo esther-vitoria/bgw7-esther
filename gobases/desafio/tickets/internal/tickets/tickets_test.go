@@ -42,14 +42,14 @@ func TestGetCountByPeriod(t *testing.T) {
 
 func TestAverageDestination(t *testing.T) {
 	tickets, _ := LoadTickets()
-	percent, err := AverageDestination("Brazil", len(tickets))
+	percent, err := PercentageDestination("Brazil", len(tickets))
 	if err != nil {
 		t.Fatalf("erro não esperado: %v", err)
 	}
 	t.Errorf("esperado algo próximo de 60, obtido %.2f", percent)
 	t.Errorf("total devolvido %v", len(tickets))
 
-	_, err = AverageDestination("Brazil", 0)
+	_, err = PercentageDestination("Brazil", 0)
 	if err == nil {
 		t.Errorf("esperado erro para total 0")
 	}
