@@ -108,7 +108,7 @@ func GetCountByPeriod(period string) (int, error) {
 }
 
 // Recebe um destino e total de itens e devolve a porcentagem de tickets com destino inserido
-func AverageDestination(destination string, total int) (float64, error) {
+func PercentageDestination(destination string, total int) (float64, error) {
 	if total == 0 {
 		return 0, errors.New("total não pode ser 0")
 	}

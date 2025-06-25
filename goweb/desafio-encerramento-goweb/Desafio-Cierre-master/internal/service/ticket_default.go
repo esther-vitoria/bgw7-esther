@@ -51,7 +51,7 @@ func (s *ServiceTicketDefault) GetTicketsByDestinationCountry(country string) (t
 	return tickets, nil
 }
 
-func (s *ServiceTicketDefault) GetPercentageTicketsByDestinationCountry(country string) (avg float64, err error) {
+func (s *ServiceTicketDefault) GetPercentageTicketsByDestinationCountry(country string) (percent float64, err error) {
 	total, err := s.GetTotalAmountTickets()
 	if err != nil {
 		return 0, err
@@ -60,6 +60,6 @@ func (s *ServiceTicketDefault) GetPercentageTicketsByDestinationCountry(country 
 	if err != nil {
 		return 0, err
 	}
-	avg = float64(countryAmount) / float64(total)
+	percent = (float64(countryAmount) / float64(total)) * 100
 	return
 }

@@ -64,7 +64,7 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	rt.Route("/tickets", func(rt chi.Router) {
 		rt.Get("/get", hd.GetAllTickets())
 		rt.Get("/getByCountry/{dest}", hd.GetTicketsAmountByDestinationCountry())
-		rt.Get("/getAverage/{dest}", hd.GetPercentageTicketsByDestinationCountry())
+		rt.Get("/getPercent/{dest}", hd.GetPercentageTicketsByDestinationCountry())
 	})
 
 	err = http.ListenAndServe(a.serverAddr, rt)

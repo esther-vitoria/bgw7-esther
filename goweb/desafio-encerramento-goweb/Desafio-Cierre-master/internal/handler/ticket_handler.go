@@ -67,7 +67,7 @@ func (h *TicketDefault) GetPercentageTicketsByDestinationCountry() http.HandlerF
 	return func(w http.ResponseWriter, r *http.Request) {
 		dest := chi.URLParam(r, "dest")
 
-		avg, err := h.sv.GetPercentageTicketsByDestinationCountry(dest)
+		percent, err := h.sv.GetPercentageTicketsByDestinationCountry(dest)
 
 		if err != nil {
 			utils.Respond(w, http.StatusNotFound, &utils.RespondBodyProduct{
@@ -79,8 +79,8 @@ func (h *TicketDefault) GetPercentageTicketsByDestinationCountry() http.HandlerF
 		}
 
 		utils.Respond(w, http.StatusOK, &utils.RespondBodyProduct{
-			Message: "The tickets average for this country is:",
-			Data:    avg,
+			Message: "The tickets percentage for this country is:",
+			Data:    percent,
 		})
 	}
 
