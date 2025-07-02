@@ -44,10 +44,10 @@ Depois que o diagrama tiver sido criado e essas perguntas tiverem sido respondid
 
 * Incorpore 10 registros na tabela de clientes e 5 na tabela de planos de Internet.  
 
-Tabela Clientes
+Tabela Clientes.      
 ![exercício 3.2](/godatabase/dia01/tarde/image/insert-customers.png)
 
-Tabela Serviços/Planos
+Tabela Serviços/Planos.     
 ![exercício 3.2](/godatabase/dia01/tarde/image/insert-services.png)
 
 * Faça as associações/relacionamentos correspondentes entre esses registros.
