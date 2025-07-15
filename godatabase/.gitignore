@@ -1,0 +1,52 @@
+# Binários compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Diretórios padrão de build
+bin/
+build/
+dist/
+out/
+
+# Objetos temporários
+*.o
+*.a
+
+# arq Go de testes
+*.coverprofile
+*.test
+
+# Diretórios e arquivos do Air (live reload)
+.tmp/
+air.toml
+
+# Módulos e sumários
+vendor/
+Gopkg.lock
+Gopkg.toml
+
+# Cache do Go
+*.mod
+*.sum
+
+# Makefile outputs comuns
+*.log
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos configuráveis extras
+.env
+.env.*
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
