@@ -2,9 +2,9 @@ package prices_test
 
 import (
 	"errors"
+	"gotests/manha/prices"
 	"testing"
 
-	prices "github.com/bgw6/bootcamp-template/Documents/GitHub/bgw7-esther/gotests/dia01/manha"
 	"github.com/stretchr/testify/require"
 )
 
