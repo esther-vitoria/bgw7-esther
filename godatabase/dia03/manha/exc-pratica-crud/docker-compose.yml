@@ -1,0 +1,68 @@
+
+services:
+
+  # app:
+  #     build:
+  #       context: .
+  #       dockerfile: Dockerfile
+  #     container_name: api
+  #     volumes:
+  #       - .:/app
+  #     ports:
+  #       - '8080:8080'
+  #     depends_on:
+  #       db:
+  #         condition: service_healthy
+  #     environment:
+  #       - DB_HOST=db
+  #       - DB_PORT=3306
+  #       - DB_USER=root
+  #       - DB_PASSWORD=root
+  #       - DB_NAME=my_db
+  #       - API_KEY=super_secret_api_key_only_for_admins
+  #       - PORT=8080
+  #       - HOST=0.0.0.0
+  #     networks:
+  #     - bootcamp-go
+  db:
+    image: mysql/mysql-server:8.0.32-1.2.11-server
+    container_name: database
+    restart: always
+    environment:
+      - MYSQL_DATABASE=my_db
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_HOST=%
+    ports:
+      - '3306:3306'
+    volumes:
+      - volumes:/var/lib/mysql
+      - ./database/build_database.sql:/docker-entrypoint-initdb.d/build_database.sql
+    networks:
+      - bootcamp-go
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  portainer:
+    platform: linux/x86_64
+    container_name: portainer
+    image: portainer/portainer-ce
+    restart: always
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - bootcamp-go
+
+volumes:
+  volumes:
+    driver: local
+  portainer_data:
+
+networks:
+  bootcamp-go:
+    driver: bridge
