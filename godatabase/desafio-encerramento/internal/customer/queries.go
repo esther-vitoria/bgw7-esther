@@ -19,7 +19,7 @@ var (
     Amount DESC
     LIMIT 5;
     `
-	InsertQuery = "INSERT INTO customers (last_name, first_name, `condition`) VALUES (?, ?, ?)"
+	InsertQuery = "INSERT INTO customers (first_name, last_name, `condition`) VALUES (?, ?, ?)"
 
 	GetTotalByCondition = `SELECT CASE 
         WHEN c.condition = '0' THEN 'Inactivo ( 0 )'
