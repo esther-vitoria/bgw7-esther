@@ -1,9 +1,11 @@
 package application
 
 import (
-	"app/internal/handler"
-	"app/internal/repository"
-	"app/internal/service"
+	"app/handler"
+	"app/internal/customer"
+	"app/internal/invoice"
+	"app/internal/product"
+	"app/internal/sale"
 	"database/sql"
 	"net/http"
 
@@ -54,6 +56,14 @@ type ApplicationDefault struct {
 	router *chi.Mux
 }
 
+// TearDown tears down the application.
+func (a *ApplicationDefault) TearDown() {
+	// close db
+	if a.db != nil {
+		a.db.Close()
+	}
+}
+
 // SetUp sets up the application.
 func (a *ApplicationDefault) SetUp() (err error) {
 	// dependencies
@@ -68,15 +78,15 @@ func (a *ApplicationDefault) SetUp() (err error) {
 		return
 	}
 	// - repository
-	rpCustomer := repository.NewCustomersMySQL(a.db)
-	rpProduct := repository.NewProductsMySQL(a.db)
-	rpInvoice := repository.NewInvoicesMySQL(a.db)
-	rpSale := repository.NewSalesMySQL(a.db)
+	rpCustomer := customer.NewCustomersMySQL(a.db)
+	rpProduct := product.NewProductsMySQL(a.db)
+	rpInvoice := invoice.NewInvoicesMySQL(a.db)
+	rpSale := sale.NewSalesMySQL(a.db)
 	// - service
-	svCustomer := service.NewCustomersDefault(rpCustomer)
-	svProduct := service.NewProductsDefault(rpProduct)
-	svInvoice := service.NewInvoicesDefault(rpInvoice)
-	svSale := service.NewSalesDefault(rpSale)
+	svCustomer := customer.NewCustomersDefault(rpCustomer)
+	svProduct := product.NewProductsDefault(rpProduct)
+	svInvoice := invoice.NewInvoicesDefault(rpInvoice)
+	svSale := sale.NewSalesDefault(rpSale)
 	// - handler
 	hdCustomer := handler.NewCustomersDefault(svCustomer)
 	hdProduct := handler.NewProductsDefault(svProduct)
@@ -93,12 +103,18 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	a.router.Route("/customers", func(r chi.Router) {
 		// - GET /customers
 		r.Get("/", hdCustomer.GetAll())
+		// - GET /customers/top-active
+		r.Get("/top-active", hdCustomer.GetTopActiveCustomersByAmountSpent())
+		// - GET /customers/invoices-by-condition
+		r.Get("/invoices-by-condition", hdCustomer.GetInvoicesByCondition())
 		// - POST /customers
 		r.Post("/", hdCustomer.Create())
 	})
 	a.router.Route("/products", func(r chi.Router) {
 		// - GET /products
 		r.Get("/", hdProduct.GetAll())
+		// - GET /products/top-sold
+		r.Get("/top-sold", hdProduct.GetTopProductsByAmountSold())
 		// - POST /products
 		r.Post("/", hdProduct.Create())
 	})
@@ -107,6 +123,8 @@ func (a *ApplicationDefault) SetUp() (err error) {
 		r.Get("/", hdInvoice.GetAll())
 		// - POST /invoices
 		r.Post("/", hdInvoice.Create())
+		// - PUT /invoices/total
+		r.Put("/total", hdInvoice.UpdateAllTotal())
 	})
 	a.router.Route("/sales", func(r chi.Router) {
 		// - GET /sales
@@ -120,8 +138,6 @@ func (a *ApplicationDefault) SetUp() (err error) {
 
 // Run runs the application.
 func (a *ApplicationDefault) Run() (err error) {
-	defer a.db.Close()
-
 	err = http.ListenAndServe(a.cfgAddr, a.router)
 	return
 }
