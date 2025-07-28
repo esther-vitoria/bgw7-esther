@@ -12,6 +12,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/DATA-DOG/go-txdb v0.2.1
 	github.com/go-chi/chi/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.10.0
