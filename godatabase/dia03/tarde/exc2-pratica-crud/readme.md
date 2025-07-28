@@ -1,74 +1,79 @@
-## Prática 2 ##
+## Desafio de fechamento 💥💻 ##
 
-### Objetivo ###
+*Bancos de dados - Implementação*
 
-O objetivo deste guia prático é que possamos consolidar e aprofundar os conceitos sobre a implementação de bancos de dados. Para isso, apresentaremos uma série de exercícios que nos permitirão revisar os tópicos que estudamos. Vamos nos basear no trabalho realizado na aula anterior.
+### Desafio ###
 
-Nesta prática, vamos implementar um método **GetAll** e realizar um **Join** entre tabelas.
+No sistema de vendas da Fantasy Products, os dados do banco de dados foram perdidos, mas antes que isso acontecesse, alguém conseguiu fazer o download de alguns arquivos .json que se referem às tabelas que foram excluídas.
+
+Esse é o DER do sistema:
+![alt text](der.png)
 
 ### Problema ###
 
-Depois de entregar a solução ao nosso cliente, um supermercado de produtos frescos, surgiram novos requisitos. Decidiu-se abrir novas filiais, na forma de depósitos em diferentes locais onde os novos produtos seriam armazenados.
+Encontramos um banco de dados de projeto para começar dentro da pasta de dados que tem 4 arquivos, ou seja, 4 tabelas (sales.json, products.json, invoices.json, customers.json), cada uma delas com os registros dessa tabela, juntamente com um script sql para criar o banco de dados.
 
-## Exercício 1: Joins ##
+Por sua vez, há uma estrutura de API com alguns métodos já implementados (**Create** e **ReadAll**).
 
-Vamos adicionar um novo domínio ao nosso aplicativo, **warehouses**. Essa é uma representação dos depósitos onde os produtos são armazenados. *Cada produto é armazenado em um depósito e um depósito pode ter muitos produtos*. O domínio terá os seguintes campos:
+Os campos e a ordem de cada tabela são conhecidos:
 
-````
-{
-   "id": 1,
-   "name": "SuperMarket",
-   "address": "123 Main Street",
-   "telephone": "555-555-5555",
-   "capacity": 500
-}
-````
+- **sales.json** 💸 id, product_id, invoice_id, quantity                        
+- **products.json** 🛒 id,description,price                                                
+- **invoices.json** 🧾 id,datetime,customer_id,total                                        
+- **customers.json** 👨‍💼 id,first_name,last_name,condition      
 
-Para implementar esse domínio, precisamos atualizar nosso aplicativo. Para isso, adicionaremos o campo **werehouse_id** à estrutura *do product*, que será a *chave estrangeira* que indica a qual depósito o produto pertence. Quando um novo produto for criado, o ID do depósito ao qual ele pertence deverá ser enviado; esse campo será **obrigatório**.
+### 💡 Objetivos ###
 
+Para aumentar o banco de dados, podemos usar o seguinte comando em um terminal na base do projeto:
 
-Compartilhamos com você um script para criar um novo domínio no banco de dados, que é atribuído a cada produto já criado no depósito com o ID 1:
-
-[adicionar warehouses.sql](https://drive.google.com/file/d/16HbiGxCsLsnXsYWXe2cxZRla3TVoYhfw/view)
-
-Depois de definir o campo, vamos criar novos pontos de extremidade com o domínio, que são
-
-- **GET warehouses/{id} ->** *Read One* | Buscar um depósito por id
-- **POST warehouses -> Create** | Criar um depósito
-
-Além disso, dentro do produto, adicionaremos uma nova consulta:
-
-- **GET warehouse/reportProducts?id=[int] ->** *Join* | Obtenha um relatório do número de produtos nos depósitos (inclusive se eles tiverem 0). Caso o ID do depósito chegue por consulta, aplique o filtro correspondente.
-
-````
-[
-    {
-
-        "name": "SuperMarket",
-        "product_count": 100
-    }
-]
-````
-
-## Exercício 2: Read All ##
-
-O objetivo deste exercício é implementar um método **Read All** dos **products** e **warehouses** no banco de dados.
-
-- **GET warehouses ->** *Read All* | Fetch list of **warehouses** (Obter lista de **warehouses**)
-- **GET products ->** *Read All* | Obter uma lista de **products**
+```
+sudo mysql -u root -p -v < ./docs/db/mysql/database.sql
+```
 
 
+Como você deve ter notado, a tabela de **invoices** perdeu os dados totais, portanto, é necessário que possamos recalcular com os dados que você tem entre **sales, invoices e products**.
 
-## Exercício 3: Integration Test ## 
-Para validar se os novos requisitos são funcionais para as próximas iterações do aplicativo, vamos testar as novas funcionalidades. Vamos fazer um teste de unidade do repositório. Para isso, usaremos o pacote [go-txdb](https://pkg.go.dev/github.com/DATA-DOG/go-txdb).
+Execute as seguintes tarefas:
 
-| Método                        | Resposta esperada                  | Descrição                                                          |
-|-------------------------------|------------------------------------|--------------------------------------------------------------------|
-| **Read All \| warehouses**    | *Lista de todos os warehouses*     | Espera-se que todos os *warehouses* registrados sejam obtidos.     |
-| **Read All \| Products**      | *Lista de todos os products*       | Espera-se que todos os *products* registrados sejam obtidos.       |
-| **Read One \| warehouses**    | *Warehouse esperado por id*        | Obter o warehouse com o ID solicitado.                             |
-| **Create \| warehouses**      | *Warehouse criado*                 | Um warehouse é adicionado e devolvido.                             |
+- Crie uma app que permita carregar os dados json no respectivo armazenamento.
+- Crie um método de endpoint que permita atualizar os dados das faturas.
 
 
-## Exercício 3.1: Expansão de tests [ Opcional ]## 
-Para melhorar a capacidade de manutenção do aplicativo, convidamos você a implementar testes de unidade dos outros métodos de repositório **de products (Store, Delete, Update)**.
+### 💡 Novas consultas a serem realizadas: ###
+
+1) Valores totais arredondados para 2 casas decimais por **condition** do **customer**
+
+    *Saída esperada*
+    | Condition       | Total     |
+    |-----------------|-----------|
+    | Inactivo (0)    | 605929.10 |
+    | Activo (1)      | 716792.33 |
+
+
+2) Top **5** dos **products** mais vendidos e suas quantidades vendidas
+
+    *Saída esperada*    
+    | Description                | Total |
+    |----------------------------|-------|
+    | Vinegar - Raspberry        | 660   |
+    | Flour - Corn, Fine         | 521   |
+    | Cookie - Oatmeal           | 467   |
+    | Pepper - Red Chili         | 439   |
+    | Chocolate - Milk Coating   | 436   |
+
+3) Top 5 dos **customers ativos** quem gastou mais dinheiro    
+
+    *Saída esperada* 
+    | First Name | Last name | Amount    |
+    |------------|-----------|-----------|
+    | Lannie     | Tortis    | 58513.55  |
+    | Jasen      | Crowcum   | 48291.03  |
+    | Elvina     | Ovell     | 43590.75  |
+    | Lazaro     | Anstis    | 40792.06  |
+    | Wilden     | Oaten     | 39786.79  |
+
+ 
+
+- Realizar testes de unidade nas novas funcionalidades a serem incorporadas nos **storages** respetivos, usando o package **go-txdb** (Observação: algumas consultas usam **inner join**)
+
+- Crie **handlers** e registre-os nos **endpoints**.
