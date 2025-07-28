@@ -13,8 +13,8 @@ services:
       - '3306:3306'
     volumes:
       - volumes:/var/lib/mysql
-      - ./database/mysql/01-database.sql:/docker-entrypoint-initdb.d/01-database.sql
-      - ./database/mysql/02-data.sql:/docker-entrypoint-initdb.d/02-data.sql
+      - ./database/mysql/database.sql:/docker-entrypoint-initdb.d/database.sql
+      - ./database/mysql/database-test.sql:/docker-entrypoint-initdb.d/database-test.sql
     networks:
       - bootcamp-go
     healthcheck:
