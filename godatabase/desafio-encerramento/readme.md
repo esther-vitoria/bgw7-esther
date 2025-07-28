@@ -6,7 +6,8 @@
 
 No sistema de vendas da Fantasy Products, os dados do banco de dados foram perdidos, mas antes que isso acontecesse, alguém conseguiu fazer o download de alguns arquivos .json que se referem às tabelas que foram excluídas.
 
-Esse é o DER do sistema:
+Esse é o DER do sistema:     
+
 ![alt text](der.png)
 
 ### Problema ###
