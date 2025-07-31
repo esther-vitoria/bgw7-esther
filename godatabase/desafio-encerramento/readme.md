@@ -1,80 +1,326 @@
-## Desafio de fechamento 💥💻 ##
+# 🚀 Fantasy Products API - Desafio de Fechamento
 
-*Bancos de dados - Implementação*
+## 📖 Sobre o Projeto
 
-### Desafio ###
+Sistema de vendas **Fantasy Products** desenvolvido em Go com MySQL. O projeto implementa recuperação de dados perdidos através de arquivos JSON e uma API REST completa para gerenciamento de clientes, produtos, faturas e vendas.
 
-No sistema de vendas da Fantasy Products, os dados do banco de dados foram perdidos, mas antes que isso acontecesse, alguém conseguiu fazer o download de alguns arquivos .json que se referem às tabelas que foram excluídas.
+### 🎯 Contexto do Desafio
+Os dados do banco foram perdidos, mas arquivos JSON das tabelas foram recuperados. O sistema implementa:
+- **Migração automática** de dados JSON para MySQL
+- **Recálculo de totais** de faturas baseado em vendas
+- **Relatórios analíticos** de clientes e produtos
+- **API REST completa** com endpoints CRUD
 
-Esse é o DER do sistema:     
+![DER do Sistema](der.png)
 
-![alt text](der.png)
+## 🛠️ Tecnologias Utilizadas
 
-### Problema ###
+### Backend
+- **Go 1.23.5** - Linguagem principal
+- **Chi Router v5.2.2** - Framework web HTTP
+- **MySQL 8.0** - Banco de dados relacional
+- **Docker & Docker Compose** - Containerização
 
-Encontramos um banco de dados de projeto para começar dentro da pasta de dados que tem 4 arquivos, ou seja, 4 tabelas (sales.json, products.json, invoices.json, customers.json), cada uma delas com os registros dessa tabela, juntamente com um script sql para criar o banco de dados.
+### Dependências Principais
+- `github.com/go-sql-driver/mysql` - Driver MySQL
+- `github.com/joho/godotenv` - Variáveis de ambiente
+- `github.com/stretchr/testify` - Framework de testes
+- `github.com/DATA-DOG/go-txdb` - Mock de transações
 
-Por sua vez, há uma estrutura de API com alguns métodos já implementados (**Create** e **ReadAll**).
+### Ferramentas
+- **Air** - Hot reload
+- **Portainer** - Gerenciamento Docker
 
-Os campos e a ordem de cada tabela são conhecidos:
+## ⚙️ Pré-requisitos
 
-- **sales.json** 💸 id, product_id, invoice_id, quantity                        
-- **products.json** 🛒 id,description,price                                                
-- **invoices.json** 🧾 id,datetime,customer_id,total                                        
-- **customers.json** 👨‍💼 id,first_name,last_name,condition      
+- **Go 1.23.5+**
+- **Docker & Docker Compose**
+- **Make** (recomendado)
 
-### 💡 Objetivos ###
+## 🚀 Como Executar
 
-Para aumentar o banco de dados, podemos usar o seguinte comando em um terminal na base do projeto:
+### 1. Configuração Inicial
+```bash
+# Clone e navegue para o projeto
+git clone <url-do-repositorio>
+cd bgw7-esther/godatabase/desafio-encerramento
+
+# Instalar dependências
+go mod tidy
+```
+
+### 2. Criar arquivo .env
+```env
+# Banco de Dados
+DB_USER=root
+DB_PASSWORD=root
+DB_NET=tcp
+DB_ADDR=localhost:3306
+DB_NAME=fantasy_products
+
+# Servidor
+HOST=localhost
+PORT=8080
+
+# Arquivos JSON
+CUSTOMER_JSON=./database/json/customers.json
+PRODUCT_JSON=./database/json/products.json
+INVOICE_JSON=./database/json/invoices.json
+SALE_JSON=./database/json/sales.json
+```
+
+### 3. Executar com Docker (Recomendado)
+```bash
+# Subir MySQL + Portainer
+make up-build
+
+# Executar aplicação (com hot reload)
+make dev
+```
+
+### 4. Execução Manual
+```bash
+# Subir apenas MySQL
+docker-compose up -d db
+
+# Executar aplicação
+go run ./cmd/main.go
+```
+
+## 🌐 Endpoints da API
+
+### 👥 Customers
+- `GET /customers` - Lista todos os clientes
+- `POST /customers` - Cria novo cliente
+- `GET /customers/top-active` - Top 5 clientes ativos por valor gasto
+- `GET /customers/invoices-by-condition` - Faturas por condição (ativo/inativo)
+
+### 🛍️ Products
+- `GET /products` - Lista todos os produtos
+- `POST /products` - Cria novo produto
+- `GET /products/top-sold` - Top 5 produtos mais vendidos
+
+### 🧾 Invoices
+- `GET /invoices` - Lista todas as faturas
+- `POST /invoices` - Cria nova fatura
+- `PUT /invoices/total` - **Recalcula totais** de todas as faturas
+
+### 💰 Sales
+- `GET /sales` - Lista todas as vendas
+- `POST /sales` - Registra nova venda
+
+## 📊 Funcionalidades Principais
+
+### 🔄 Migração de Dados
+- **Loaders**: Carregam dados de arquivos JSON
+- **Migrators**: Migram dados para o banco MySQL
+- **Automático**: Executa na inicialização da aplicação
+
+### 📈 Relatórios Analíticos
+
+#### 1. Valores por Condição de Cliente
+```bash
+GET /customers/invoices-by-condition
+```
+```json
+{
+    "data": [
+        {
+            "condition": "Inactivo ( 0 )",
+            "total": 570326.75
+        },
+        {
+            "condition": "Activo ( 1 )",
+            "total": 752394.69
+        }
+    ],
+    "message": "customers found"
+}
+```
+
+#### 2. Top 5 Produtos Mais Vendidos
+```bash
+GET /products/top-sold
+```
+```json
+{
+    "data": [
+        {
+            "description": "Vinegar - Raspberry",
+            "total": 660
+        },
+        {
+            "description": "Flour - Corn, Fine",
+            "total": 521
+        },
+        {
+            "description": "Cookie - Oatmeal",
+            "total": 467
+        },
+        {
+            "description": "Pepper - Red Chili",
+            "total": 439
+        },
+        {
+            "description": "Chocolate - Milk Coating",
+            "total": 436
+        }
+    ],
+    "message": "products found"
+}
+```
+
+#### 3. Top 5 Clientes Ativos
+```bash
+GET /customers/top-active
+```
+```json
+{
+    "data": [
+        {
+            "first_name": "Lannie",
+            "last_name": "Tortis",
+            "total": 58513.55
+        },
+        {
+            "first_name": "Jasen",
+            "last_name": "Crowcum",
+            "total": 48291.03
+        },
+        {
+            "first_name": "Lazaro",
+            "last_name": "Anstis",
+            "total": 40792.06
+        },
+        {
+            "first_name": "Tomasina",
+            "last_name": "Kieran",
+            "total": 39162.4
+        },
+        {
+            "first_name": "Cassondra",
+            "last_name": "Penbarthy",
+            "total": 33749.85
+        }
+    ],
+    "message": "customers found"
+}
+```
+
+## 🧪 Testes
+
+### Executar Testes
+```bash
+# Todos os testes
+go test ./...
+
+# Com cobertura
+make cover
+make cover-html
+
+# Por módulo
+go test ./internal/customer/...
+go test ./internal/product/...
+```
+
+### 🎯 Cobertura de Testes
+- ✅ **CRUD básico** - Create, Read operations
+- ✅ **Consultas complexas** - JOINs e agregações
+- ✅ **Funcionalidades específicas** - Recálculo de totais
+- ✅ **Repositories** - 12 testes cobrindo todos os módulos
+- ✅ **Mock de transações** - Usando go-txdb
+
+## 🔧 Comandos Úteis
+
+### Make Commands
+```bash
+make up          # Sobe containers
+make down        # Para containers
+make logs        # Visualiza logs
+make cover       # Executa testes com cobertura
+```
+
+### Docker
+```bash
+# Logs do MySQL
+docker-compose logs -f db
+
+# Acessar MySQL
+docker exec -it database mysql -uroot -proot fantasy_products
+
+# Status dos containers
+docker-compose ps
+```
+
+## 📁 Estrutura do Projeto
 
 ```
-sudo mysql -u root -p -v < ./docs/db/mysql/database.sql
+.
+├── cmd/main.go                 # Ponto de entrada
+├── internal/
+│   ├── application/            # Configuração da aplicação
+│   ├── customer/              # Módulo de clientes
+│   ├── product/               # Módulo de produtos
+│   ├── invoice/               # Módulo de faturas
+│   ├── sale/                  # Módulo de vendas
+│   ├── domain/                # Entidades de domínio
+│   ├── loader/                # Carregadores JSON
+│   └── migrator/              # Migradores de dados
+├── handler/                   # Handlers HTTP
+├── database/
+│   ├── json/                  # Arquivos JSON (dados recuperados)
+│   └── mysql/                 # Scripts SQL
+└── pkg/                       # Pacotes compartilhados
 ```
 
+## 🔍 Troubleshooting
 
-Como você deve ter notado, a tabela de **invoices** perdeu os dados totais, portanto, é necessário que possamos recalcular com os dados que você tem entre **sales, invoices e products**.
+### Problemas Comuns
+```bash
+# MySQL não conecta
+docker-compose restart db
+docker-compose logs db
 
-Execute as seguintes tarefas:
+# Porta ocupada
+lsof -i :8080
+# Altere PORT no .env
 
-- Crie uma app que permita carregar os dados json no respectivo armazenamento.
-- Crie um método de endpoint que permita atualizar os dados das faturas.
+# Dependências Go
+go clean -modcache
+go mod tidy
 
+# Air não funciona
+go install github.com/air-verse/air@latest
+```
 
-### 💡 Novas consultas a serem realizadas: ###
+## 🎉 Funcionalidades Implementadas
 
-1) Valores totais arredondados para 2 casas decimais por **condition** do **customer**
+✅ **Migração completa** de dados JSON para MySQL  
+✅ **API REST** com 12 endpoints  
+✅ **Recálculo automático** de totais de faturas  
+✅ **Relatórios analíticos** com consultas complexas  
+✅ **Testes unitários** com cobertura completa  
+✅ **Containerização** com Docker Compose  
+✅ **Hot reload** para desenvolvimento  
 
-    *Saída esperada*
-    | Condition       | Total     |
-    |-----------------|-----------|
-    | Inactivo (0)    | 605929.10 |
-    | Activo (1)      | 716792.33 |
+---
 
+## 🚀 Quick Start
 
-2) Top **5** dos **products** mais vendidos e suas quantidades vendidas
+```bash
+# 1. Clone e navegue
+git clone <repo> && cd bgw7-esther/godatabase/desafio-encerramento
 
-    *Saída esperada*    
-    | Description                | Total |
-    |----------------------------|-------|
-    | Vinegar - Raspberry        | 660   |
-    | Flour - Corn, Fine         | 521   |
-    | Cookie - Oatmeal           | 467   |
-    | Pepper - Red Chili         | 439   |
-    | Chocolate - Milk Coating   | 436   |
+# 2. Configure ambiente
+cp .env.example .env  # Ajuste as variáveis
 
-3) Top 5 dos **customers ativos** quem gastou mais dinheiro    
+# 3. Execute
+make up-build && make dev
 
-    *Saída esperada* 
-    | First Name | Last name | Amount    |
-    |------------|-----------|-----------|
-    | Lannie     | Tortis    | 58513.55  |
-    | Jasen      | Crowcum   | 48291.03  |
-    | Elvina     | Ovell     | 43590.75  |
-    | Lazaro     | Anstis    | 40792.06  |
-    | Wilden     | Oaten     | 39786.79  |
-
- 
-
-- Realizar testes de unidade nas novas funcionalidades a serem incorporadas nos **storages** respetivos, usando o package **go-txdb** (Observação: algumas consultas usam **inner join**)
-
-- Crie **handlers** e registre-os nos **endpoints**.
+# 4. Teste a API
+curl http://localhost:8080/customers
+```
+⚙️ **Postaman Colletion:** `postman_collection.json`        
+🌐 **API:** http://localhost:8080  
+🐳 **Portainer:** http://localhost:9000  
+📊 **Banco:** MySQL em localhost:3306
