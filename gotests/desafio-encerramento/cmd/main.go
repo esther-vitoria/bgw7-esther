@@ -6,25 +6,22 @@ import (
 )
 
 func main() {
-	// env
-	// ...
-
-	// app
-	// - config
 	cfg := &application.ConfigApplicationDefault{
-		Addr: "127.0.0.1:8080",
+		Addr:            "127.0.0.1:8080",
+		ProductJSONPath: "database/products.json",
 	}
+
 	app := application.NewApplicationDefault(cfg)
-	// - tear down
 	defer app.TearDown()
-	// - set up
-	if err := app.SetUp(); err != nil {
-		fmt.Println(err)
+	if err := app.SetUp(cfg); err != nil {
+		fmt.Println("Erro no setup:", err)
 		return
 	}
-	// - run
+
+	fmt.Printf("✅ Servidor rodando em %s\n", cfg.Addr)
+
 	if err := app.Run(); err != nil {
-		fmt.Println(err)
+		fmt.Println("Erro no run:", err)
 		return
 	}
 }

@@ -12,8 +12,8 @@ import (
 
 // ConfigApplicationDefault is the configuration of the application.
 type ConfigApplicationDefault struct {
-	// Addr is the address of the application.
-	Addr string
+	Addr            string
+	ProductJSONPath string
 }
 
 // NewApplicationDefault returns a new ApplicationDefault.
@@ -55,10 +55,14 @@ func (a *ApplicationDefault) TearDown() (err error) {
 }
 
 // SetUp sets up the application.
-func (a *ApplicationDefault) SetUp() (err error) {
+func (a *ApplicationDefault) SetUp(cfg *ConfigApplicationDefault) (err error) {
 	// dependencies
 	// - repository
-	a.rpProduct, err = repository.NewProductsJSON("database/json/products.json")
+	productJSONPath := "/database/products.json"
+	if cfg != nil && cfg.ProductJSONPath != "" {
+		productJSONPath = cfg.ProductJSONPath
+	}
+	a.rpProduct, err = repository.NewProductsJSON(productJSONPath)
 	if err != nil {
 		return err
 	}
