@@ -10,7 +10,7 @@ cover-html:
 	go tool cover -html=coverage.out
 
 cover-filtered:
-	./scripts/cover-filtered.sh
+	./cover-filtered.sh
 
 cover-filtered-total:
 	go tool cover -func=coverage_filtered.out
