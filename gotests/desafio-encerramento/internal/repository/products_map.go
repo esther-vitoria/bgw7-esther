@@ -55,16 +55,15 @@ func (r *ProductsJSON) SearchProducts(query internal.ProductQuery) (p map[int]in
 		if query.Id > 0 && query.Id != k {
 			continue
 		}
-
 		// add the product to the result
 		p[k] = v
-
-		if len(p) == 0 {
-			return nil, errors.New("product not found")
-		}
 	}
 
-	return
+	if len(p) == 0 {
+		return nil, errors.New("product not found")
+	}
+
+	return p, nil
 }
 
 // Close closes the file handle
