@@ -3,6 +3,7 @@ package loader
 import (
 	"app/internal"
 	"encoding/json"
+	"errors"
 	"os"
 )
 
@@ -31,7 +32,7 @@ func (l *ProductsJSON) Load() (p []internal.Product, err error) {
 	var ps []ProductJSON
 	err = json.NewDecoder(l.file).Decode(&ps)
 	if err != nil {
-		return
+		return nil, errors.New("error decoding json file")
 	}
 
 	// serialize the product data
@@ -46,5 +47,5 @@ func (l *ProductsJSON) Load() (p []internal.Product, err error) {
 		})
 	}
 
-	return
+	return p, nil
 }
